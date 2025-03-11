@@ -20,34 +20,35 @@ class TwoFactorController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'two_factor_code' => 'required|numeric|digits:6',
+            'two_factor_code' => 'required',
         ]);
 
         $user = Auth::user();
 
-        // Check if OTP matches
         if ($user->two_factor_code !== $request->two_factor_code) {
             Flasher::addError('❌ Invalid OTP! Please try again.');
             return back()->withInput();
         }
 
-        // Check if OTP expired
-        if (now()->greaterThan($user->two_factor_expires_at)) {
+        if ($user->two_factor_expires_at < now()) {
             Flasher::addWarning('⚠️ OTP expired! A new code has been sent.');
-            $user->regenerateTwoFactorCode(); // Regenerate new OTP
             return back();
         }
 
-        // OTP Verified, clear it
-        $user->two_factor_code = null;
-        $user->two_factor_expires_at = null;
+        // Mark OTP as verified by setting email_verified_at
+        $user->email_verified_at = now();
+        $user->cleanTwoFactorCode(); // Remove OTP after verification
         $user->save();
 
-        Flasher::addSuccess('✅ OTP Verified! Welcome back.');
-
-        return redirect()->route('dashboard'); // Redirect to dashboard after successful 2FA
+        // Check subscription status and redirect accordingly
+    if ($user->is_subscribed == 0) {
+        Flasher::addInfo('📢 Please complete your subscription.');
+        return redirect()->route('subscription');
     }
 
+        Flasher::addSuccess('🎉 You have successfully logged in!');
+        return redirect()->route('dashboard');
+    }
 
     public function resend(Request $request)
     {

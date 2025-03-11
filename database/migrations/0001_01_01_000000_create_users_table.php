@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('two_factor_code')->nullable();
             $table->timestamp('two_factor_expires_at')->nullable();
             $table->boolean('is_subscribed')->default(0);
+            $table->string('google_id')->nullable();
+            $table->string('facebook_id')->nullable();
+            $table->string('github_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

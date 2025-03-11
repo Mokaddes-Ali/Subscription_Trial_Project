@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -13,20 +14,14 @@ Route::get('/subscription', function () {
     return view('subscription');
 })->name('subscription');
 
-// routes/web.php
 
-Route::middleware('auth')->group(function () {
-    Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice'); // Prompt to verify email if not verified
+//login with google socialite
 
-    Route::get('/verify', [TwoFactorController::class, 'verify'])->name('verify');
-    Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('verify.otp');
-    Route::post('/verify/resend', [TwoFactorController::class, 'resend'])->name('verify.resend');
+Route::get('login/google', [SocialController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('auth/google-collback', [SocialController::class, 'handleGoogleCallback'])->name('auth.google-callback');
+Route::get('login/github', [SocialController::class, 'redirectToGithub']);
+Route::get('login/facebook', [SocialController::class, 'redirectToFacebook']);
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['verified', 'twofactor'])->name('dashboard'); // Only accessible if email is verified and 2FA is completed
-});
 
 
 Route::get('/verify', [TwoFactorController::class, 'verify'])->name('verify');
@@ -35,7 +30,7 @@ Route::post('/verify/resend', [TwoFactorController::class, 'resend'])->name('ver
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified', 'twofactor'])->name('dashboard');
+})->middleware(['auth', 'verified', 'factor'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

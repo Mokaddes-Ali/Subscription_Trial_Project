@@ -12,11 +12,16 @@ class TwoFactorCheck
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // If user is authenticated but hasn't completed 2FA, redirect to 2FA verification
-        if (auth()->check() && auth()->user()->two_factor_code) {
+        $user = auth()->user();
+
+        if ($user && is_null($user->email_verified_at)) {
             return redirect()->route('verify');
         }
 
-        return $next($request); // Continue to next step if 2FA is completed
+        if ($user && $user->is_subscribed == 0) {
+            return redirect()->route('subscription');
+        }
+
+        return $next($request);
     }
 }
