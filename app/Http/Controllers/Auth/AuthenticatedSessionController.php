@@ -2,54 +2,56 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Flasher\Laravel\Facade\Flasher;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Notifications\TwoFactorCodeNotification;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Get the authenticated user
+        $request->user()->regenerateTwoFactorCode();
+        $request->user()->notify(new TwoFactorCodeNotification());
+
         $user = Auth::user();
 
-        // Check the subscription status
+        if (!$user->hasVerifiedEmail()) {
+            Flasher::addSuccess('Please verify your email, we sent a verification code.');
+            return redirect()->route('verify');
+        }
+
         if ($user->is_subscribed == 0) {
+            Flasher::addWarning('You need to subscribe to access the dashboard.');
             return redirect()->route('subscription');
         }
 
+        Flasher::addSuccess('Login successful! Welcome back.');
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
+        Flasher::addSuccess('Logout successful! See you again.');
         return redirect('/');
     }
 }
+
+

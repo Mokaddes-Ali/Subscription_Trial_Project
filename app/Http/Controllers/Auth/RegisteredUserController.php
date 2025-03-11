@@ -4,29 +4,21 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Flasher\Laravel\Facade\Flasher;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -41,10 +33,20 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // // ✅ Email verification পাঠানো হবে, কিন্তু বাধ্যতামূলক না রেজিস্ট্রেশনের সময়
+        // $user->sendEmailVerificationNotification();
 
-        Auth::login($user);
+        Flasher::addSuccess('Registration successful! Please login.');
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('login'));
     }
 }
+
+
+//         event(new Registered($user));
+
+//         Auth::login($user);
+
+//         return redirect(route('login', absolute: false));
+//     }
+// }
