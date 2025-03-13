@@ -15,6 +15,18 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->is_subscribed == 1)
+                        <x-nav-link :href="route('subscription')" :active="request()->routeIs('subscription')">
+                            {{ __('Subscription') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('trial')" :active="request()->routeIs('trial')">
+                            {{ __('Trial') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('test-mode')" :active="request()->routeIs('test-mode')">
+                            {{ __('Test Mode') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +82,18 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->is_subscribed == 1)
+                <x-responsive-nav-link :href="route('subscription')" :active="request()->routeIs('subscription')">
+                    {{ __('Subscription') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('trial')" :active="request()->routeIs('trial')">
+                    {{ __('Trial') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('test-mode')" :active="request()->routeIs('test-mode')">
+                    {{ __('Test Mode') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

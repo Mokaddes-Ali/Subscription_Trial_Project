@@ -41,7 +41,7 @@
     </form>
 
     <!-- Social Login Buttons -->
-    <div class="mt-6 text-center">
+    {{-- <div class="mt-6 text-center">
         <p class="text-sm text-gray-600 mb-4">
             {{ __('Or log in with') }}
         </p>
@@ -50,14 +50,14 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Google_2015_logo.svg" alt="Google" class="w-8 h-8 rounded-full" />
         </a>
 
-        {{-- <a href="{{ route('login.github') }}" class="inline-block mx-2">
+         <a href="{{ route('login.github') }}" class="inline-block mx-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub" class="w-8 h-8 rounded-full" />
         </a>
 
         <a href="{{ route('login.facebook') }}" class="inline-block mx-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-8 h-8 rounded-full" />
-        </a> --}}
-    </div>
+        </a>
+    </div> --}}
 
     <div class="mt-6 text-center">
         <p class="text-sm text-gray-600 inline">

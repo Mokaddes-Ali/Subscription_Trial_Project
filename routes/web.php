@@ -10,10 +10,30 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/subscription', function () {
-    return view('subscription');
-})->name('subscription');
 
+Route::get('/subscription', [SocialController::class, 'index'])->name('subscription');
+Route::post('/create-checkout-session', [SocialController::class, 'createCheckoutSession'])->name('create.checkout.session');
+// Route::get('/payment-success', function () {
+//     // Handle successful payment here
+//     return view('payment-success');
+// })->name('payment.success');
+
+Route::get('payment/success', [SocialController::class, 'paymentSuccess'])->name('payment-success');
+
+Route::get('/payment-cancel', function () {
+    // Handle cancelled payment here
+    return view('payment-cancel');
+})->name('payment.cancel');
+
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/subscription', [SocialController::class, 'index'])->name('subscription');
+    Route::get('/trial', [SocialController::class, 'index'])->name('trial');
+    Route::get('/test-mode', [SocialController::class, 'index'])->name('test-mode');
+});
 
 //login with google socialite
 
